@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Slip</title>
+</head>
+<body>
+    <h1>Payroll Slip for {{ employee.name }}</h1>
+    <ul>
+        <li>Salary: {{ employee.salary }}</li>
+        <li>Tax Deductions: {{ employee.tax_deductions }}</li>
+        <li>Bonus: {{ employee.bonus }}</li>
+        <li>Net Salary: {{ employee.net_salary }}</li>
+    </ul>
+</body>
+</html>

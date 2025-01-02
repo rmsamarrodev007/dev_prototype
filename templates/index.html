@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Application</title>
+</head>
+<body>
+    <h1>Payroll System</h1>
+    <a href="{{ url_for('add_employee') }}">Add Employee</a>
+    <h2>Employees</h2>
+    <ul>
+    {% for employee in employees %}
+        <li>{{ employee.name }} - <a href="{{ url_for('payroll_slip', employee_id=loop.index0) }}">View Payroll Slip</a></li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
