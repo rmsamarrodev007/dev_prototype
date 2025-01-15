@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payslip</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            position: relative;
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #996f03;
+        }
+        .employee-details,
+        .salary-details {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        .employee-details td,
+        .salary-details td,
+        .employee-details th,
+        .salary-details th {
+            padding: 8px;
+            text-align: left;
+        }
+        .employee-details th,
+        .salary-details th {
+            background-color: #f4f4f4;
+        }
+        .salary-details {
+            margin-top: 20px;
+        }
+        .total {
+            font-weight: bold;
+            background-color: #f4f4f4;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .footer p {
+            font-size: 12px;
+            color: #888;
+        }
+        img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 180px; /* Set the image size */
+            height: auto;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #996f03;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #b79d5b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="{{ url_for('static', filename='images/ro_header_logo.png') }}" alt="Logo">
+    <!-- Payslip Header -->
+    <br><br><br>
+    <p align="right" style="font-style: italic;">{{date_now}}</p>
+    <button id="back-button" onclick="goBack()">Go Back</button>
+    <!-- Button to print the page -->
+    <button id="print-button" onclick="printPage()">Print</button>
+    <h2>Employee Payslip</h2>
+    {% if employee %}
+    <div class="employee-info">
+
+        <br><br><br>
+        <table class="employee-details">
+            <tr>
+                <th>Employee Name</th>
+                <td>{{ employee[1] }}</td>
+            </tr>
+            <tr>
+                <th>Employee ID</th>
+                <td>{{ employee[0] }}</td>
+            </tr>
+            <tr>
+                <th>Employee Type</th>
+                <td>{{ employee[2] }}</td>
+            </tr>
+            <tr>
+                <th>Pay Period</th>
+                <td>from {{start_date_name}} to {{end_date_name}}</td>
+            </tr>
+        </table>
+       
+    </div>
+
+    <!-- Salary Breakdown -->
+    <h3>Earnings</h3>
+    <table class="salary-details">
+        <tr>
+            <th>Basic Salary per Montly:</th>
+            <td>Php {{ basic_salary }}</td>
+        </tr>
+        <tr>
+            <th>Daily Salary:</th>
+            <td>Php {{ employee[4] }}</td>
+        </tr>        
+        <tr>
+            <th>Total Daily Salary:</th>
+            <td>Php {{total_daily_rate}}</td>
+        </tr>
+        <tr>
+            <th>Total Overtime Pay:</th>
+            <td>Php {{total_ot_pay}}</td>
+        </tr>
+        <tr>
+            <th>Total Deduction:</th>
+            <td>Php {{total_deductions}}</td>
+        </tr>
+        <tr class="total">
+            <th>Net Pay</th>
+            <td>Php {{total_earnings}}</td>
+        </tr>
+    </table>
+    {% endif %}
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>This is a system generated payslip. No signature is required.</p>
+    </div>
+</div>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    // Function to trigger the print dialog
+    function printPage() {
+        // document.getElementById("back-button").style.display = "none";  
+        window.print();  // Opens the print dialog
+    }
+</script>
+</body>
+</html>

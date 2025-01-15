@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Payroll Dashboard</title>
+    
+</head>
+<body>
+
+    <header style="display: flex;">
+        <img src="{{ url_for('static', filename='images/ro_header_logo.png') }}" alt="Logo">
+        <h1>TOP INSTA CONSTRUCTION CORPORATION</h1>
+    </header>
+    <nav>
+        <ul class="navbar">
+            <li><a href="http://127.0.0.1:5000/list_of_employees">Employees</a></li>
+            <li><a href="http://127.0.0.1:5000/add_employee">Add Employee</a></li>
+            <li><a href="http://127.0.0.1:5000/dashboard" class="active">Dashboard</a></li>
+            <li><a href="http://127.0.0.1:5000/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Employee Summary Card -->
+            <div class="card">
+                <h3>Employee Summary</h3>
+                <p>Total Active Employees: {{active}}</p>
+                <p>Total Non-Active Employees: {{nonactive}}</p>
+                <p>Total Salary of all active employees: Php {{total_salary}}</p>
+            </div>
+
+            <!-- Payroll Breakdown Card -->
+            <!-- <div class="card">
+                <h3>Payroll Breakdown</h3>
+                <p>Average Salary: $10,000</p>
+                <p>Highest Salary: $20,000</p>
+                <p>Lowest Salary: $5,000</p>
+            </div> -->
+
+            <!-- Employees Table -->
+            <div class="card">
+                <h3>Employee List</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <!-- <th>Employee Id</th> -->
+                            <th>Employee Name</th>
+                            <th>Type</th>
+                            <th>Daily Rate</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterate over the 'users' list and display each user in a table row -->
+                        {% for emp in employees %}
+                            <tr>
+                                <td id="{{ emp[0] }}" style="display: none;">{{ emp[0] }}</td>
+                                <td>{{ emp[1] }}</td>
+                                <td>{{ emp[2] }}</td>
+                                <td>{{ emp[4] }}</td>
+                                <td>{% if emp[5] %}
+                                    Non-Active
+                                    {% else %}
+                                    Active
+                                    {% endif %}
+
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Login</title>
+    <style>
+        /* Basic reset for padding and margins */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 30%;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color:  #996f03;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        .btnLogin {
+            width: 100%;
+            padding: 12px;
+            background-color:  #996f03;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btnLogin:hover {
+            background-color: #b79d5b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+    <img src="{{ url_for('static', filename='images/ro_header_logo.png') }}" alt="Logo">
+    <h2>Payroll Login</h2>
+    <!-- <form action="/login" method="POST"> -->
+        <input type="text" class="input-field" id="username" name="username" placeholder="Username" required>
+        <input type="password" class="input-field" id="password"  name="password" placeholder="Password" required>
+        <button type="submit" class="btnLogin" id="login">Login</button>
+    <!-- </form> -->
+</div>
+<script>
+        $("#login").click(function(){
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            if (username.includes('admin') && password.includes('admin123')){
+                // Send POST request to the server
+                fetch('/login', {
+                    method: 'POST', // HTTP method
+                    headers: {
+                        'Content-Type': 'application/json' // Specify that we're sending JSON
+                    },
+                    body: JSON.stringify({
+                    username: username,
+                    password: password,
+                })
+                })
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    // Handle the server response
+                    // alert(data);
+                    var baseURL = window.location.protocol + "//" + window.location.host;
+                    window.location.href = baseURL + '/list_of_employees'  ;
+                    // location.reload();
+                    console.log("Server response:", data);
+                });
+            }else {
+                alert('Incorrect username or password.')
+
+            }
+    })
+</script>
+</body>
+</html>

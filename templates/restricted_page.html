@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restricted Content</title>
+    <script>
+        // Simulating a check for user session (you can modify based on your logic)
+        function checkUserLogin() {
+            // Assuming the user info is stored in localStorage for this example
+            const user = localStorage.getItem('username');
+
+            if (user) {
+                document.getElementById('restricted-content').style.display = 'block';
+                document.getElementById('login-message').style.display = 'none';
+            } else {
+                document.getElementById('restricted-content').style.display = 'none';
+                document.getElementById('login-message').style.display = 'block';
+            }
+        }
+
+        window.onload = checkUserLogin;
+    </script>
+</head>
+<body>
+    <h1>Welcome to the Page</h1>
+
+    <div id="login-message">
+        <p>Please <a href="login">Login</a> to access restricted content.</p>
+    </div>
+
+    <div id="restricted-content" style="display: none;">
+        <h2>Restricted Content</h2>
+        <p>Only logged-in users can see this content.</p>
+    </div>
+</body>
+</html>

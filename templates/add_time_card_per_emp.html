@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Payroll App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container1 {
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .container2 {
+            display: flex; /* Use flexbox to arrange divs horizontally */
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .box {
+            background-color: #4CAF50; /* Green background for divs */
+            color: white;
+            padding: 20px;
+            margin: 10px;
+            width: 45%; /* Each div takes up 45% of the container width */
+            box-sizing: border-box;
+            border-radius: 8px; /* Rounded corners */
+        }
+
+        .box1 {
+            background-color: #007bff; 
+        }
+
+        .box2 {
+            background-color: rgb(6, 146, 53); 
+        }
+
+    </style>
+</head>
+<header style="display: flex;">
+    <img src="{{ url_for('static', filename='images/ro_header_logo.png') }}" alt="Logo">
+    <h1>TOP INSTA CONSTRUCTION CORPORATION</h1>
+</header>
+<nav></nav>
+    <ul class="navbar">
+        <li><a href="http://127.0.0.1:5000/list_of_employees" >Employees</a></li>
+        <li><a href="http://127.0.0.1:5000/add_employee">Add Employee</a></li>
+        <li><a href="http://127.0.0.1:5000/dashboard">Dashboard</a></li>
+        <li><a href="http://127.0.0.1:5000/logout">Logout</a></li>
+    </ul>
+</nav>
+<body>
+    <div class="container">
+        <!-- Display success or error message -->
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if remarks %}
+        <div class="result">
+            <p>Successfully Added.</p>
+        </div>
+        {% endif %}
+        <button class="viewBtn" style="padding: 12px 30px">View Records</button>
+        <h1>Add Time Card</h1>
+        
+        {% if employee %}
+            <label for="emp_id" id="emp_id", name="emp_id" style="display:None">{{ employee[0] }}</label>
+            <label for="employee_name">Employee Name : {{ employee[1] }}</label><br><br>
+            <label for="employee_type">Employee Type : {{ employee[2] }} </label><br><br>
+            <label for="daily_rate">Daily Rate (Php): {{ employee[4] }}</label><br>
+        {% endif %}
+        
+        <!-- Payroll form -->
+        <form action="/add_time_card_per_emp" method="POST">
+            <label for="remarks">Remarks:</label>
+            <select id="remarks" name="remarks">
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+            </select>
+            <p id="Present" class="section">
+                <label for="login_date">Login Date and Time:</label>
+                <input type="datetime-local" id="login_date" name="login_date"><br>
+                
+                <label for="logout_date">Logout Date and Time:</label>
+                <input type="datetime-local" id="logout_date" name="logout_date"><br>
+            </p>
+
+            <label for="note">Note:</label>
+            <input type="text" id="note" name="note" placeholder="Example: Sick Leave">
+            <input type="hidden" id="hid_emp_id" name="hid_emp_id">
+            <br>
+            <button type="submit"  style="padding: 12px 30px">Add Time Card</button>
+            
+        </form>
+        
+    </div>
+
+    <script>
+        // JavaScript to show/hide sections based on dropdown selection
+        document.getElementById('remarks').addEventListener('change', function() {
+            // Get selected value from dropdown
+            var selectedValue = this.value;
+    
+            // Hide all sections
+            var sections = document.querySelectorAll('.section');
+            sections.forEach(function(section) {
+                section.style.display = 'none';
+            });
+    
+            // Show the selected section
+            if (selectedValue) {
+                document.getElementById(selectedValue).style.display = 'block';
+            }
+        });
+
+        // Get the ID of the label with the specific ID 'usernameLabel'
+        const labelText  = document.getElementById('emp_id').textContent;
+
+        // Set the ID of the label as the value of the input field
+        document.getElementById('hid_emp_id').value = labelText;
+
+        // Optional: Log the action to confirm it's working
+        console.log('Label ID added to input value:', labelText);
+
+        $(".viewBtn").click(function(){
+            var id = document.getElementById('hid_emp_id').value = labelText;
+            // Construct the URL with the parameter
+            var url = "http://127.0.0.1:5000/list_time_card_per_emp?id=" + id;  // Pass the 'id' parameter
+            // Redirect to the new page with the parameter
+            window.location.href = url;  // Redirect to the new page
+        })
+
+    </script>
+</body>
+</html>

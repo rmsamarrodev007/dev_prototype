@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Time Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container1 {
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .container2 {
+            display: flex; /* Use flexbox to arrange divs horizontally */
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+
+        .box {
+            background-color: #996f03; /* Green background for divs */
+            color: white;
+            padding: 20px;
+            margin: 10px;
+            width: 45%; /* Each div takes up 45% of the container width */
+            box-sizing: border-box;
+            border-radius: 8px; /* Rounded corners */
+        }
+
+        .box1 {
+            background-color: #996f03; 
+        }
+
+        .box2 {
+            background-color: #996f03; 
+        }
+
+        /* Styling for pagination buttons */
+        .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        }
+
+        .pagination button {
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 1px solid #ccc;
+        background-color: #996f03;
+        cursor: pointer;
+        }
+
+        .pagination button:hover {
+        background-color: #ddd;
+        }
+
+        .pagination button.disabled {
+        background-color: #e9e9e9;
+        cursor: not-allowed;
+        }
+        
+    </style>
+</head>
+<body>
+
+<header style="display: flex;">
+    <img src="{{ url_for('static', filename='images/ro_header_logo.png') }}" alt="Logo">
+    <h1>TOP INSTA CONSTRUCTION CORPORATION</h1>
+</header>
+<nav>
+    <ul class="navbar">
+        <li><a href="http://127.0.0.1:5000/list_of_employees">Employees</a></li>
+        <li><a href="http://127.0.0.1:5000/add_employee">Add Employee</a></li>
+        <li><a href="http://127.0.0.1:5000/dashboard">Dashboard</a></li>
+        <li><a href="http://127.0.0.1:5000/logout">Logout</a></li>
+    </ul>
+</nav>
+<div class="container2">
+    
+    <!-- First div -->
+    {% if employee %}
+    <div class="box box1">
+        <h3>Employee Details</h3>
+        <p for="emp_id" id="emp_id", name="emp_id" style="display:None">{{ employee[0] }}</p>
+        <p for="employee_name"><strong>Employee Name :</strong> {{ employee[1] }}</p>
+        <p for="employee_type"><strong>Employee Type : </strong>{{ employee[2] }} </p>
+        <p for="basic_salary"><strong>Basic Salary per Week:</strong> Php {{ basic_salary}} </p>
+        <p for="daily_rate"><strong>Daily Rate (Php):</strong> {{ employee[4] }}</p>
+        <p for="hour_rate"><strong>Hourly Rate:</strong> Php {{ hourly_rate }} </p>
+    </div>
+    {% endif %}
+    <!-- Second div -->
+    <div class="box box2">
+        <h3>Earnings</h3>
+        <p><strong>Total Daily Salary:</strong> Php {{ total_daily_rate }}  </p>
+        <p><strong>Total Overtime Pay:</strong> Php {{ total_ot_pay }} </p>
+        <p><strong>Total Deductions :</strong> Php {{ total_deductions }} </p>
+        <p><strong>Total Earnings:</strong> Php {{ total_earnings }} </p>
+    </div>
+
+</div>
+<div class="container1">
+
+    <!-- Date Range Input Fields -->
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate">
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate">
+    <br>
+    <button onclick="searchDateRange()" style="padding: 12px 30px">Search</button>
+    <button onclick="generatePayslip()" style="padding: 12px 20px">Generate Payslip</button>
+
+    <table id="timeTable">
+        <thead>
+            <tr>
+                <!-- <th>Id</th> -->
+                <th>Date Added</th>
+                <th>Date & Time In</th>
+                <th>Date & Time Out</th>
+                <th>Worked Hours</th>
+                <th>OT Rendered</th>
+                <th>OT Pay</th>
+                <th>Daily Rate</th>
+                <th>Late</th>
+                <th>Remarks</th>
+                <th>Note</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Iterate over the 'users' list and display each user in a table row -->
+            {% for item in time_cards %}
+                <tr data-date="{{ item['date'] }}">
+                    <td id="{{ item['time_card_id'] }}" style="display:None">{{ item['time_card_id'] }}</td>
+                    <td >{{ item['date'] }}</td>
+                    <td>{{ item['time_in'] }}</td>
+                    <td>{{ item['time_out'] }}</td>
+                    <td>{{ item['worked_hours'] }}</td>
+                    <td>{{ item['ot_rendered'] }}</td>
+                    <td>{{ item['ot_pay'] }}</td>
+                    <td>{{ item['daily_rate'] }}</td>
+                    <td>{{ item['late'] }}</td>
+                    <td>{{ item['remarks'] }}</td>
+                    <td>{{ item['note'] }}</td>
+                    <td>
+                        <button class="deleteBtn">Delete</button>
+                        <!-- <button id="myButton" >Delete</button> -->
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination" id="pagination"></div>
+    <br>
+    {% if employee %}
+        <!-- <button onclick="exportTableToCSV('{{ employee[1] }}.csv')" style="padding: 12px 30px">Download CSV</button> -->
+        <button style="padding: 12px 30px" class="addBtn">Add Time Card</button>
+    {% endif %}
+</div>
+
+<script>
+
+    // Function to show a confirmation box and send POST request if confirmed
+    $(".deleteBtn").click(function(){
+        var id =  $(this).parent().parent().find('td').eq(0).html()
+        var confirmAction = confirm("Are you sure you want to delete this record?");
+        // If the user confirms, send the POST request
+        if (confirmAction) {
+             // Send POST request to the server
+             fetch('/list_time_card_per_emp', {
+                method: 'POST', // HTTP method
+                headers: {
+                    'Content-Type': 'application/json' // Specify that we're sending JSON
+                },
+                body: JSON.stringify({
+                    id: id  // Send the text as part of the request body
+                })
+            })
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                // Handle the server response
+                alert("Deleted successfully!");
+                location.reload();
+                console.log("Server response:", data);
+            })
+            .catch(error => {
+                // Handle any errors
+                alert("Error occurred while sending data.");
+                console.error("Error:", error);
+            });
+        } else {
+            alert("Action canceled.");
+        }
+    })
+
+    function searchDateRange() {
+            // // Get the selected start and end dates
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const empId = document.getElementById('emp_id').innerText;
+
+            var currentURL = window.location.href;
+
+            // Define the parameter and value to append
+            var paramSD = 'start_date';
+            var paramED = 'end_date';
+            var paramID = 'id';
+
+
+
+            // // Get all the rows in the table (except the header)
+            // const rows = document.querySelectorAll('#eventsTable tbody tr');
+
+            // // Loop through each row and filter based on the date range
+            // rows.forEach(row => {
+            //     const rowDate = row.getAttribute('data-date');  // Get the date from the data-date attribute
+              
+            //     // Check if the row date is within the selected date range
+            //     if ((startDate === '' || rowDate >= startDate) && (endDate === '' || rowDate <= endDate)) {
+            //         row.style.display = '';  // Show row if within range
+            //     } else {
+            //         row.style.display = 'none';  // Hide row if not within range
+            //     }
+            // });
+            if (startDate != '' && endDate != '')
+            {
+                // Send POST request to the server
+                fetch('/list_time_card_per_emp', {
+                    method: 'POST', // HTTP method
+                    headers: {
+                        'Content-Type': 'application/json' // Specify that we're sending JSON
+                    },
+                    body: JSON.stringify({
+                        emp_id: empId,
+                        start_date: startDate,
+                        end_date: endDate
+                    })
+                })
+                // .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    // Handle the server response
+                    // Check if the URL already has query parameters
+                    
+                    if (currentURL.indexOf('?') > -1) {
+                        // If so, append the new parameter using '&'
+                        window.location.href = currentURL + '&' + paramSD + '=' + startDate + '&' + paramED + '=' + endDate;
+                    } 
+                    if (currentURL.includes('&')) {
+                        // If not, start with '?' and append the parameter
+                        var baseURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                        var newURL = baseURL + '?'+ paramID + '=' + empId + '&' + paramSD + '=' + startDate + '&' + paramED + '=' + endDate;
+                        window.location.href = newURL;
+                    }
+                    // location.reload();
+                    console.log("Server response:", data);
+                })
+                .catch(error => {
+                    // Handle any errors
+                    alert("Error occurred while sending data.");
+                    console.error("Error:", error);
+                });
+            }
+            else { alert("Start Date and End Date Field should not be null.")}
+        }
+
+        function exportTableToCSV(filename) {
+            const table = document.getElementById("timeTable");
+            let csv = [];
+            let rows = table.rows;
+
+            // Loop through table rows
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i];
+
+                if (row.style.display !== 'none') {
+                    let rowData = [];
+
+                    // Loop through columns in each row
+                    for (let j = 0; j < row.cells.length - 1; j++) {
+                        rowData.push('"' + row.cells[j].innerText + '"');
+                    }
+
+                    csv.push(rowData.join(","));
+                }
+            }
+
+            // Create CSV string
+            const csvString = csv.join("\n");
+
+            // Create a downloadable link
+            const downloadLink = document.createElement("a");
+            downloadLink.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvString);
+            // downloadLink.target = "_blank";
+            downloadLink.download = filename;
+
+            // Trigger the download
+            downloadLink.click();
+        }
+
+        $(".addBtn").click(function(){
+            const empId = document.getElementById('emp_id').innerText;
+            // Construct the URL with the parameter
+            var url = "http://127.0.0.1:5000/add_time_card_per_emp?id=" + empId;  // Pass the 'id' parameter
+            // Redirect to the new page with the parameter
+            window.location.href = url;  // Redirect to the new page
+        })
+
+        function generatePayslip() {
+
+            // // Get the selected start and end dates
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const empId = document.getElementById('emp_id').innerText;
+            if (startDate != '' && endDate != '')
+            {
+                var currentURL = window.location.href;
+
+                var url = "http://127.0.0.1:5000/payslip?id=" + empId + '&' + "start_date=" + startDate + '&' + "end_date=" + endDate ;  // Pass the 'id' parameter
+                // Redirect to the new page with the parameter
+                window.location.href = url;  // Redirect to the new page
+                //window.open(url, '_blank');
+            }
+            else { alert("Start Date and End Date Field should not be null.")}
+        }
+        const rowsPerPage = 15; // Number of rows per page
+        const table = document.getElementById('timeTable');
+        const paginationDiv = document.getElementById('pagination');
+        let currentPage = 1;
+        // Function to display the rows for the current page
+        function displayTablePage() {
+        const rows = table.getElementsByTagName('tr');
+        const totalRows = rows.length - 1; // Exclude header row
+        const startRow = (currentPage - 1) * rowsPerPage + 1;
+        const endRow = Math.min(startRow + rowsPerPage - 1, totalRows);
+
+        // Hide all rows first
+        for (let i = 1; i <= totalRows; i++) {
+            rows[i].style.display = 'none';
+        }
+
+        // Display the rows for the current page
+        for (let i = startRow; i <= endRow; i++) {
+            rows[i].style.display = '';
+        }
+
+        // Update pagination buttons
+        updatePaginationButtons(totalRows);
+        }
+
+        // Function to update the pagination buttons
+        function updatePaginationButtons(totalRows) {
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        paginationDiv.innerHTML = ''; // Clear previous buttons
+
+        // Create Previous button
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Previous';
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = function() {
+            if (currentPage > 1) {
+            currentPage--;
+            displayTablePage();
+            }
+        };
+        paginationDiv.appendChild(prevButton);
+
+        // Create page number buttons
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.disabled = currentPage === i;
+            pageButton.onclick = function() {
+            currentPage = i;
+            displayTablePage();
+            };
+            paginationDiv.appendChild(pageButton);
+        }
+
+        // Create Next button
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = function() {
+            if (currentPage < totalPages) {
+            currentPage++;
+            displayTablePage();
+            }
+        };
+        paginationDiv.appendChild(nextButton);
+        }
+
+        // Initialize the table on page load
+        window.onload = displayTablePage;
+</script>
+
+
+</body>
+</html>
